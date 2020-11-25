@@ -23,11 +23,12 @@
         <p>{{ new Date(article.time * 1000).toLocaleString() }}</p>
 
         <button v-on:click="viewComments(article.id)">...</button>
-        <ul>
+        <ul class="comments">
           <li
             v-for="comment of comments[article.id]"
             :key="comment.id"
             v-html="comment.text"
+            class="comment"
           ></li>
         </ul>
         <hr />
@@ -64,9 +65,9 @@ export default {
       this.articles = await response.json();
     },
     async viewComments(id) {
-      //TODO create toggle mode method
-      //TODO change comment storing
-      //TODO fix empty comments
+      //TODO close comments
+      //TODO comment cashing
+      //TODO fix empty comments -dunno why they are epmty
       let response = null;
 
       response = await fetch(this.url + "comments/" + id);
@@ -79,7 +80,6 @@ export default {
       }
       this.$set(this.comments, id, articleComments);
       console.log(this.comments);
-
     },
   },
   mounted: function () {
