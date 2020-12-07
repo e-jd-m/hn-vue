@@ -13,7 +13,7 @@
           <h2>{{ article.title }}</h2>
         </a>
 
-        <router-link :to="'article/' + article.id">New</router-link>
+        <router-link :to="'article/' + article.id">detail</router-link>
         <div class="score">{{ article.score }}</div>
         <a
           v-bind:href="'https://news.ycombinator.com/item?id=' + article.id"
@@ -22,15 +22,13 @@
         >
         <p>{{ new Date(article.time * 1000).toLocaleString() }}</p>
 
-        <button v-on:click="viewComments(article.id)">...</button>
-        <ul class="comments">
-          <li
-            v-for="comment of comments[article.id]"
-            :key="comment.id"
-            v-html="comment.text"
-            class="comment"
-          ></li>
-        </ul>
+        <button v-on:click="toggleComments(article.id)">...</button>
+        <CommentsTree
+          v-for="comment in comments[article.id]"
+          :key="comment.id"
+          :comment="comment"
+          :depth="0"
+        />
         <hr />
       </div>
     </div>
@@ -39,8 +37,12 @@
 
 <script>
 //v-if="!!comments[article.id]"
+import CommentsTree from "@/components/CommentsTree.vue";
 export default {
   name: "ArticleList",
+  components: {
+    CommentsTree,
+  },
   props: {
     mode: {
       validator: function (value) {
@@ -64,13 +66,13 @@ export default {
 
       this.articles = await response.json();
     },
-    async viewComments(id) {
+    async fetchComments(id) {
       //TODO close comments
       //TODO comment cashing
-      //TODO fix empty comments -dunno why they are epmty
+      //TODO remove empty comments
       let response = null;
 
-      response = await fetch(this.url + "comments/" + id);
+      response = await fetch(this.url + "comments/" + id + "/0");
       let body = await response.json();
 
       let articleComments = [];
@@ -80,6 +82,11 @@ export default {
       }
       this.$set(this.comments, id, articleComments);
       console.log(this.comments);
+    },
+    toggleComments(id) {
+      if (!this.comments[id]) {
+        this.fetchComments(id);
+      }
     },
   },
   mounted: function () {
