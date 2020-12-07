@@ -27,9 +27,13 @@ export default {
     };
   },
   computed: {
-    commentStyle: {
-      marginLeft: `${this.depth * 1.5}em`,
-      borderLeft: `1px solid ${this.colors[this.depth % this.colors.length]}`,
+    commentStyle() {
+      return {
+        "margin-left": `${this.depth * 1.5}em`,
+        "border-left": `1px solid ${
+          this.colors[this.depth % this.colors.length]
+        }`,
+      };
     },
   },
 };
