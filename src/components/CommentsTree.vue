@@ -4,7 +4,6 @@
       <small>
         <span>{{ comment.by }}</span>
         <span>|{{ new Date(comment.time * 1000).toLocaleString() }}</span>
-        | {{ depth }}
       </small>
       <div v-html="comment.text"></div>
     </div>
@@ -23,15 +22,17 @@ export default {
   props: ["comment", "depth"],
   data: function () {
     return {
-      colors: ["blue, red, orange"],
+      colors: ["blue", "orange", "yellow", "pink"],
     };
   },
   computed: {
     commentStyle() {
+      //"margin-left": `${this.depth * 1.5}em`,
+
       return {
         "margin-left": `${this.depth * 1.5}em`,
-        "border-left": `1px solid ${
-          this.colors[this.depth % this.colors.length]
+        "border-left": `3px solid ${
+          this.depth == 0 ? "red" : this.colors[this.depth % this.colors.length]
         }`,
       };
     },

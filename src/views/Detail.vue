@@ -33,7 +33,6 @@ export default {
       );
 
       this.comments = await response.json();
-      console.log(this.comments);
     },
   },
   mounted: function () {
