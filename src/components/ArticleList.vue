@@ -23,12 +23,16 @@
         <p>{{ new Date(article.time * 1000).toLocaleString() }}</p>
 
         <button v-on:click="toggleComments(article.id)">...</button>
-        <CommentsTree
-          v-for="comment in comments[article.id]"
-          :key="comment.id"
-          :comment="comment"
-          :depth="0"
-        />
+        <div v-if="comments[article.id]">
+          <div v-if="comments[article.id].visible">
+            <CommentsTree
+              v-for="comment in comments[article.id].text"
+              :key="comment.id"
+              :comment="comment"
+              :depth="0"
+            />
+          </div>
+        </div>
         <hr />
       </div>
     </div>
@@ -69,24 +73,27 @@ export default {
     async fetchComments(id) {
       //TODO close comments
       //TODO comment cashing
-      //TODO remove empty comments
       let response = null;
 
       response = await fetch(this.url + "comments/" + id + "/0");
       let body = await response.json();
 
-      let articleComments = [];
+      let articleComments = {};
 
+      articleComments.text = [];
       for (let item of body) {
-        articleComments.push(item);
+        articleComments.text.push(item);
       }
+      articleComments.visible = true;
       this.$set(this.comments, id, articleComments);
-      console.log(this.comments);
     },
     toggleComments(id) {
       if (!this.comments[id]) {
         this.fetchComments(id);
+        return;
       }
+      this.comments[id].visible = !this.comments[id].visible;
+      this.$set(this.comments, id, this.comments[id]);
     },
   },
   mounted: function () {
